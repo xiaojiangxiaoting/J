@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>杰哥，今天你想我了吗 💕</title>
+<style>
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,#ffe3ec,#e7d6ff);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh; overflow-x:hidden; color:#5a2a44;
+  }
+  .screen{display:none; width:100%; max-width:460px; padding:20px; text-align:center;}
+  .screen.active{display:block; animation:fade .4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  h1{font-size:26px; margin:0 0 6px;}
+  .sub{color:#9a6a82; font-size:14px; margin-bottom:26px;}
+  .btn{
+    display:inline-block; border:none; cursor:pointer;
+    padding:14px 26px; margin:8px; border-radius:30px;
+    font-size:17px; font-weight:600; color:#fff;
+    background:linear-gradient(135deg,#ff5d8f,#ff9eb5);
+    box-shadow:0 8px 20px rgba(255,93,143,.35);
+    transition:transform .15s;
+  }
+  .btn:active{transform:scale(.95);}
+  .btn.ghost{background:#fff; color:#ff5d8f; box-shadow:0 6px 16px rgba(0,0,0,.08);}
+  .beat-img{width:250px; max-width:74%; border-radius:20px; box-shadow:0 12px 30px rgba(0,0,0,.15); margin:8px auto 16px; display:block; animation:shake .7s ease-in-out infinite;}
+  @keyframes shake{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
+  .wheel-wrap{position:relative; width:min(372px,90vw); height:min(372px,90vw); margin:6px auto 12px;}
+  .wheel{
+    width:100%; height:100%; border-radius:50%;
+    position:relative; overflow:hidden;
+    border:10px solid #fff; box-shadow:0 12px 30px rgba(0,0,0,.2);
+    transition:transform 4s cubic-bezier(.17,.67,.12,.99);
+  }
+  .seg-label{position:absolute; width:64px; transform:translate(-50%,-50%); text-align:center; pointer-events:none;}
+  .seg-label .ic{font-size:26px; line-height:1;}
+  .seg-label .tx{font-size:10px; color:#7a3550; font-weight:700; line-height:1.25; margin-top:3px;}
+  .pointer{position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:0;height:0; border-left:15px solid transparent; border-right:15px solid transparent; border-top:26px solid #ff5d8f; z-index:5; filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));}
+  .spin-btn{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:88px;height:88px;border-radius:50%; border:none; cursor:pointer; background:linear-gradient(135deg,#ff5d8f,#ff9eb5); color:#fff; font-size:16px; font-weight:700; box-shadow:0 6px 16px rgba(255,93,143,.5); z-index:6;}
+  .spin-btn:active{transform:translate(-50%,-50%) scale(.93);}
+  .spin-btn:disabled{background:#d9b8c6; cursor:not-allowed; box-shadow:none;}
+  .timer{font-size:13px; color:#c25b86; margin:0 0 10px; min-height:18px;}
+  .record{
+    display:none; margin:0 auto 16px; max-width:min(372px,90vw);
+    background:rgba(255,255,255,.85); border-radius:16px; padding:12px 16px;
+    box-shadow:0 6px 16px rgba(0,0,0,.08); font-size:14px; color:#8a4a64; line-height:1.6;
+  }
+  .record.show{display:block; animation:fade .4s;}
+  .record b{color:#ff5d8f;}
+  .record .t{color:#a06; font-size:12px;}
+  .overlay{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:20; padding:24px;}
+  .overlay.active{display:flex; animation:fade .3s;}
+  .card{background:#fff; border-radius:24px; padding:30px 26px; max-width:320px; width:100%; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.3);}
+  .card .big{font-size:64px; margin-bottom:6px;}
+  .card h2{margin:6px 0; color:#ff5d8f;}
+  .card p{color:#9a6a82; font-size:15px; line-height:1.5; margin:10px 0 20px;}
+</style>
+</head>
+<body>
+  <!-- 屏1 提问 -->
+  <section class="screen active" id="s1">
+    <h1>杰哥，今天你想我了吗？</h1>
+    <div class="sub">诚实地选一个哦～</div>
+    <button class="btn" onclick="go('s3')">想 😊</button>
+    <button class="btn ghost" onclick="go('s2')">不想 🥺</button>
+  </section>
+
+  <!-- 屏2 胖揍 -->
+  <section class="screen" id="s2">
+    <h1>哼！不想？</h1>
+    <img class="beat-img" src="./beat.jpg" alt="打死你!">
+    <div class="sub">杰哥胆大包天了，想造反?</div>
+    <button class="btn" onclick="go('s3')">我错了，我是想说我非常想 💢</button>
+  </section>
+
+  <!-- 屏3 转盘 -->
+  <section class="screen" id="s3">
+    <h1 style="font-size:18px; line-height:1.4;">来吧，不白想！今天想我可以抽取一个奖励哦</h1>
+    <div class="sub">抽中后需要截图兑奖哦~</div>
+    <div class="wheel-wrap">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel"></div>
+      <button class="spin-btn" id="spinBtn" onclick="spin()">开始</button>
+    </div>
+    <div class="timer" id="timer"></div>
+    <div class="record" id="record">🎁 抽奖记录：抽中了 <b id="recordName"></b> <span class="t" id="recordTime"></span></div>
+    <button class="btn ghost" onclick="go('s1')">↺ 重新问一次</button>
+  </section>
+
+  <!-- 结果弹窗 -->
+  <div class="overlay" id="overlay">
+    <div class="card">
+      <div class="big" id="resEmoji">🎉</div>
+      <h2 id="resName">恭喜！</h2>
+      <p id="resDesc"></p>
+      <button class="btn" onclick="closeRes()">收下啦 💕</button>
+    </div>
+  </div>
+
+<script>
+  const prizes=[
+    {emoji:'🧧',name:'6.6红包',label:'6.6<br>红包',desc:'微信红包 ¥6.6，立刻到账心意～'},
+    {emoji:'💵',name:'5.2红包',label:'5.2<br>红包',desc:'微信红包 ¥5.2，520 的小心意～'},
+    {emoji:'⏰',name:'随叫随到陪伴次卡',label:'随叫随到<br>陪伴次卡',desc:'凭此卡可召唤对方一次，随叫随到！'},
+    {emoji:'🥤',name:'自选饮品免费畅饮次卡',label:'自选饮品<br>畅饮次卡',desc:'奶茶/咖啡/果汁任选，本次免费畅饮！'},
+    {emoji:'🎟️',name:'听话券一张',label:'听话券<br>一张',desc:'凭此券对方需无条件听话一次，超好用！'},
+    {emoji:'💆',name:'15min非专业按摩',label:'15min<br>非专业按摩',desc:'肩颈按摩 15 分钟，手法业余但心意满分'},
+    {emoji:'🍀',name:'谢谢惠顾',label:'谢谢<br>惠顾',desc:'什么都没抽到…但抱抱还是可以给一个的'},
+    {emoji:'🎫',name:'不生气券一张',label:'不生气<br>券一张',desc:'下次生气可抵用一次，免吵架'},
+  ];
+  const n=prizes.length, seg=360/n;
+  const colors=['#ff9eb5','#ffd3e0'];
+  const grad=prizes.map((p,i)=>`${colors[i%2]} ${i*seg}deg ${(i+1)*seg}deg`).join(',');
+  const wheel=document.getElementById('wheel');
+  wheel.style.background=`conic-gradient(${grad})`;
+  prizes.forEach((p,i)=>{
+    const a=i*seg+seg/2;
+    const rad=a*Math.PI/180;
+    const r=0.60;
+    const x=50+50*r*Math.sin(rad);
+    const y=50-50*r*Math.cos(rad);
+    const d=document.createElement('div');
+    d.className='seg-label';
+    d.style.left=x+'%'; d.style.top=y+'%';
+    d.innerHTML=`<div class="ic">${p.emoji}</div><div class="tx">${p.label}</div>`;
+    wheel.appendChild(d);
+  });
+
+  const DAY=24*60*60*1000;
+  let spinTimer=null;
+  function nowStr(){
+    const d=new Date(), p=x=>String(x).padStart(2,'0');
+    return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+  }
+  function fmt(ms){
+    let s=Math.floor(ms/1000);
+    const h=Math.floor(s/3600); s%=3600;
+    const m=Math.floor(s/60); const sec=s%60;
+    return `${h}小时${m}分${sec}秒`;
+  }
+  function showRecord(){
+    const rec=localStorage.getItem('loveWheelRecord');
+    if(!rec) return;
+    try{
+      const r=JSON.parse(rec);
+      document.getElementById('recordName').textContent=r.name;
+      document.getElementById('recordTime').textContent='（'+r.time+'）';
+      document.getElementById('record').classList.add('show');
+    }catch(e){}
+  }
+  function updateLock(){
+    const last=localStorage.getItem('loveWheelLastSpin');
+    const btn=document.getElementById('spinBtn');
+    const timer=document.getElementById('timer');
+    if(last && (Date.now()-Number(last))<DAY){
+      btn.disabled=true; btn.textContent='已抽';
+      const remain=DAY-(Date.now()-Number(last));
+      timer.textContent='⏳ 距离下次抽奖还有 '+fmt(remain);
+      showRecord();
+      spinTimer=setTimeout(updateLock,1000);
+    }else{
+      if(spinTimer){clearTimeout(spinTimer); spinTimer=null;}
+      btn.disabled=false; btn.textContent='开始';
+      timer.textContent='';
+    }
+  }
+  function spin(){
+    const btn=document.getElementById('spinBtn');
+    if(btn.disabled) return;
+    btn.disabled=true; btn.textContent='已抽';
+    const idx=Math.floor(Math.random()*n);
+    const desired=360-(idx*seg+seg/2);
+    const mod=((current%360)+360)%360;
+    let delta=((desired-mod)%360+360)%360;
+    current+=360*6+delta;
+    wheel.style.transform=`rotate(${current}deg)`;
+    setTimeout(()=>{
+      const p=prizes[idx];
+      const t=nowStr();
+      document.getElementById('resEmoji').textContent=p.emoji;
+      document.getElementById('resName').textContent=(p.name==='谢谢惠顾'?'谢谢惠顾～':'抽中：'+p.name);
+      document.getElementById('resDesc').textContent=p.desc;
+      document.getElementById('overlay').classList.add('active');
+      document.getElementById('recordName').textContent=p.name;
+      document.getElementById('recordTime').textContent='（'+t+'）';
+      document.getElementById('record').classList.add('show');
+      localStorage.setItem('loveWheelLastSpin', Date.now());
+      localStorage.setItem('loveWheelRecord', JSON.stringify({name:p.name, time:t}));
+      updateLock();
+    },4100);
+  }
+  let current=0;
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(id==='s3') updateLock();
+  }
+  function closeRes(){document.getElementById('overlay').classList.remove('active');}
+</script>
+</body>
+</html>
